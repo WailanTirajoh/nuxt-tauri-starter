@@ -90,4 +90,28 @@ pnpm tauri build
 
 ---
 
+## Roadmap — Tauri API integrations
+
+The storage layer is done. Next up: wrapping Tauri's native APIs into composables so you never touch raw IPC directly.
+
+| API | Composable | Status |
+|-----|-----------|--------|
+| File system (read/write/watch) | `useFileSystem` | 🔲 Planned |
+| Native dialogs (open/save/message) | `useDialog` | 🔲 Planned |
+| Shell & subprocess | `useShell` | 🔲 Planned |
+| System tray | `useSystemTray` | 🔲 Planned |
+| Window management (minimize, resize, multi-window) | `useWindow` | 🔲 Planned |
+| OS notifications | `useNotification` | 🔲 Planned |
+| Clipboard | `useClipboard` | 🔲 Planned |
+| Auto-updater | `useUpdater` | 🔲 Planned |
+| HTTP client (Rust-side, bypasses CORS) | `useTauriHttp` | 🔲 Planned |
+| Print / PDF export | `usePrint` | 🔲 Planned |
+| Global shortcuts | `useGlobalShortcut` | 🔲 Planned |
+
+Each composable will follow the same pattern as `useDocumentStorage` — VueUse-style, typed, and ready to drop into any component.
+
+Want to contribute one? Open a PR.
+
+---
+
 MIT License · Built for the developer community
