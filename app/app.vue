@@ -19,6 +19,9 @@
           <NuxtLink to="/filesystem" class="hover:text-gray-300">
             Files
           </NuxtLink>
+          <NuxtLink to="/updater" class="hover:text-gray-300">
+            Updates
+          </NuxtLink>
         </div>
       </div>
     </nav>

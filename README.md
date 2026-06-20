@@ -3,7 +3,7 @@
 **Ship a cross-platform desktop app in minutes, not days.**
 
 ![Tauri](https://img.shields.io/badge/Tauri-2.0-FFC131?style=flat-square&logo=tauri)
-![Nuxt](https://img.shields.io/badge/Nuxt-3.0-00DC82?style=flat-square&logo=nuxt.js)
+![Nuxt](https://img.shields.io/badge/Nuxt-4.0-00DC82?style=flat-square&logo=nuxt.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
@@ -11,7 +11,7 @@
 
 ## What you get
 
-A fully configured **Nuxt 3 + Tauri 2** starter with reactive, SQLite-backed storage that works offline, syncs across windows, and ships as a 3–10 MB native binary — no Electron, no server required.
+A fully configured **Nuxt 4 + Tauri 2** starter with reactive, SQLite-backed storage that works offline, syncs across windows, and ships as a 3–10 MB native binary — no Electron, no server required.
 
 ```vue
 <script setup>
@@ -120,9 +120,48 @@ Ops: `readTextFile`/`writeTextFile`, `readFile`/`writeFile`, `exists`, `mkdir`, 
 
 ---
 
+## Auto-update: `useUpdater`
+
+VueUse-style wrapper around Tauri's updater plugin — a small reactive state machine: check → download (with progress) → install → relaunch. SSR-safe.
+
+```ts
+const { checkForUpdates, available, version, downloadAndInstall, progress, relaunchApp } = useUpdater()
+
+await checkForUpdates()
+if (available.value) {
+  await downloadAndInstall()   // progress tracks 0–100
+  await relaunchApp()          // restart into the new version
+}
+```
+
+`status` reflects `idle | checking | available | up-to-date | downloading | ready | installing | error`. Pass `{ autoCheck: true }` to check on mount.
+
+> The updater only works in **signed production builds** with a real `plugins.updater` pubkey + endpoint — see setup below. The starter ships a **placeholder** config (empty pubkey, example endpoint) so the plugin initializes; until you fill it in, `checkForUpdates()` resolves to a friendly error state (try it on `/updater`).
+
+### Auto-update setup
+
+`src-tauri/tauri.conf.json` already has a placeholder `plugins.updater` block — the updater plugin requires it to initialize, but the empty pubkey means checks fail until you supply real values. To enable it:
+
+1. **Generate a keypair:** `pnpm tauri signer generate -- -w ~/.tauri/myapp.key` (keep the private key secret; never commit it).
+2. **Fill in** the `plugins.updater` block and enable artifact generation:
+   ```jsonc
+   "bundle": { "createUpdaterArtifacts": true },
+   "plugins": {
+     "updater": {
+       "pubkey": "<contents of myapp.key.pub>",
+       "endpoints": ["https://your.host/updates/{{target}}/{{arch}}/{{current_version}}"]
+     }
+   }
+   ```
+3. **Sign releases** by setting `TAURI_SIGNING_PRIVATE_KEY` (and `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`) in your release CI, and host a `latest.json` matching Tauri's schema.
+
+See the [Tauri updater docs](https://v2.tauri.app/plugin/updater/) for the full flow.
+
+---
+
 ## Stack
 
-**Frontend:** Nuxt 3 · Vue 3 · TypeScript · Tailwind CSS · VueUse · Pinia  
+**Frontend:** Nuxt 4 · Vue 3 · TypeScript · Tailwind CSS · VueUse · Pinia  
 **Backend:** Tauri 2 · Rust · Diesel 2 · SQLite
 
 **Architecture in one line:** Rust handles persistence. Vue owns all business logic. No Rust recompile for feature changes.
@@ -147,18 +186,18 @@ pnpm tauri build
 
 ## Roadmap — Tauri API integrations
 
-The storage layer is done. Next up: wrapping Tauri's native APIs into composables so you never touch raw IPC directly.
+Wrapping Tauri's native APIs into composables so you never touch raw IPC directly. Several are shipped — storage, notifications, window management, file system, and the auto-updater — with more on the way.
 
 | API | Composable | Status |
 |-----|-----------|--------|
-| File system (read/write/watch) | `useFileSystem` | 🔲 Planned |
+| File system (read/write/watch) | `useFileSystem` | ✅ Done |
 | Native dialogs (open/save/message) | `useDialog` | 🔲 Planned |
 | Shell & subprocess | `useShell` | 🔲 Planned |
 | System tray | `useSystemTray` | 🔲 Planned |
 | Window management (minimize, resize, multi-window) | `useWindow` | ✅ Done |
 | OS notifications | `useNotification` | ✅ Done |
 | Clipboard | `useClipboard` | 🔲 Planned |
-| Auto-updater | `useUpdater` | 🔲 Planned |
+| Auto-updater | `useUpdater` | ✅ Done |
 | HTTP client (Rust-side, bypasses CORS) | `useTauriHttp` | 🔲 Planned |
 | Print / PDF export | `usePrint` | 🔲 Planned |
 | Global shortcuts | `useGlobalShortcut` | 🔲 Planned |
