@@ -10,6 +10,9 @@
           <NuxtLink to="/demo" class="hover:text-gray-300">
             Storage Demo
           </NuxtLink>
+          <NuxtLink to="/notifications" class="hover:text-gray-300">
+            Notifications
+          </NuxtLink>
         </div>
       </div>
     </nav>
