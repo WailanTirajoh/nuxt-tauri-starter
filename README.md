@@ -65,6 +65,22 @@ user.value.name = 'Wailan'
 
 ---
 
+## Native notifications: `useNotification`
+
+VueUse-style wrapper around Tauri's notification plugin. Permission is handled for you, state is reactive and shared app-wide, and it's SSR-safe.
+
+```ts
+const { notify, permissionGranted } = useNotification()
+
+notify('Saved!')                              // string → title
+notify({ title: 'Upload done', body: '3 files' })
+// → first call auto-requests OS permission, then fires a native notification
+```
+
+**Defaults & options:** `useNotification(defaultOptions, { autoRequest, requestOnMounted, onError })` — `defaultOptions` (e.g. `{ icon }`) merge into every `notify()` call.
+
+---
+
 ## Stack
 
 **Frontend:** Nuxt 3 · Vue 3 · TypeScript · Tailwind CSS · VueUse · Pinia  
@@ -101,7 +117,7 @@ The storage layer is done. Next up: wrapping Tauri's native APIs into composable
 | Shell & subprocess | `useShell` | 🔲 Planned |
 | System tray | `useSystemTray` | 🔲 Planned |
 | Window management (minimize, resize, multi-window) | `useWindow` | 🔲 Planned |
-| OS notifications | `useNotification` | 🔲 Planned |
+| OS notifications | `useNotification` | ✅ Done |
 | Clipboard | `useClipboard` | 🔲 Planned |
 | Auto-updater | `useUpdater` | 🔲 Planned |
 | HTTP client (Rust-side, bypasses CORS) | `useTauriHttp` | 🔲 Planned |
