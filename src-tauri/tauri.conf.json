@@ -36,5 +36,13 @@
       "minSdkVersion": 24,
       "versionCode": 1
     }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "",
+      "endpoints": [
+        "https://releases.example.com/{{target}}/{{arch}}/{{current_version}}"
+      ]
+    }
   }
 }
