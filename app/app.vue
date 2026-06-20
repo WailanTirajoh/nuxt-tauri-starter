@@ -16,6 +16,9 @@
           <NuxtLink to="/window" class="hover:text-gray-300">
             Window
           </NuxtLink>
+          <NuxtLink to="/filesystem" class="hover:text-gray-300">
+            Files
+          </NuxtLink>
         </div>
       </div>
     </nav>
