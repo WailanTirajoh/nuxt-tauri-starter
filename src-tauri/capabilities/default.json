@@ -29,6 +29,10 @@
     "core:window:allow-is-fullscreen",
     "core:window:allow-is-focused",
     "core:window:allow-title",
-    "core:webview:allow-create-webview-window"
+    "core:webview:allow-create-webview-window",
+    "fs:allow-appdata-read-recursive",
+    "fs:allow-appdata-write-recursive",
+    "fs:allow-watch",
+    "fs:allow-unwatch"
   ]
 }

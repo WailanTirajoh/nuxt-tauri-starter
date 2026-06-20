@@ -101,6 +101,25 @@ win.createWindow('secondary', { url: '/demo' })   // open a new window
 
 ---
 
+## File system: `useFileSystem`
+
+VueUse-style wrapper around Tauri's fs plugin — typed read/write/watch ops plus a reactive `useTextFile` binding (the storage pattern applied to a file). SSR-safe and scoped to the app data dir.
+
+```ts
+const fs = useFileSystem()                 // defaults to BaseDirectory.AppData
+await fs.writeTextFile('notes.txt', 'hello')
+
+// reactive: auto-loads, debounce-writes, live-updates on external change
+const { data, isReady } = useTextFile('demo.txt')
+data.value = 'edited'   // → debounced write to the file
+```
+
+Ops: `readTextFile`/`writeTextFile`, `readFile`/`writeFile`, `exists`, `mkdir`, `remove`, `rename`, `copyFile`, `readDir`, `watch`.
+
+> File access is permission-scoped. The default capability grants only the app data dir (`fs:allow-appdata-*` + watch) — widen the scope in `src-tauri/capabilities/default.json` for other directories.
+
+---
+
 ## Stack
 
 **Frontend:** Nuxt 3 · Vue 3 · TypeScript · Tailwind CSS · VueUse · Pinia  
