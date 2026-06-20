@@ -13,6 +13,9 @@
           <NuxtLink to="/notifications" class="hover:text-gray-300">
             Notifications
           </NuxtLink>
+          <NuxtLink to="/window" class="hover:text-gray-300">
+            Window
+          </NuxtLink>
         </div>
       </div>
     </nav>

@@ -81,6 +81,26 @@ notify({ title: 'Upload done', body: '3 files' })
 
 ---
 
+## Window management: `useWindow`
+
+VueUse-style wrapper around Tauri's window API — imperative controls, reactive window state, and multi-window creation. SSR-safe.
+
+```ts
+const win = useWindow()
+
+win.toggleMaximize()
+win.toggleFullscreen()
+win.setTitle('Dashboard')
+win.createWindow('secondary', { url: '/demo' })   // open a new window
+// win.isMaximized, win.isFullscreen, win.isFocused are reactive (synced via window events)
+```
+
+`useWindow(label)` targets another window by label. Controls: `minimize`, `maximize`/`toggleMaximize`, `setFullscreen`, `center`, `show`/`hide`, `setFocus`, `setTitle`, `setSize`, `close`, plus `createWindow` / `listWindows`.
+
+> New windows need their label covered by a capability — see `src-tauri/capabilities/default.json`.
+
+---
+
 ## Stack
 
 **Frontend:** Nuxt 3 · Vue 3 · TypeScript · Tailwind CSS · VueUse · Pinia  
@@ -116,7 +136,7 @@ The storage layer is done. Next up: wrapping Tauri's native APIs into composable
 | Native dialogs (open/save/message) | `useDialog` | 🔲 Planned |
 | Shell & subprocess | `useShell` | 🔲 Planned |
 | System tray | `useSystemTray` | 🔲 Planned |
-| Window management (minimize, resize, multi-window) | `useWindow` | 🔲 Planned |
+| Window management (minimize, resize, multi-window) | `useWindow` | ✅ Done |
 | OS notifications | `useNotification` | ✅ Done |
 | Clipboard | `useClipboard` | 🔲 Planned |
 | Auto-updater | `useUpdater` | 🔲 Planned |
