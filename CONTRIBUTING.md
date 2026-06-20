@@ -6,7 +6,7 @@ Thank you for your interest in contributing! 🎉
 
 ### Reporting Bugs 🐛
 
-1. Check if the bug has already been reported in [Issues](https://github.com/yourusername/nuxt-tauri-boilerplate/issues)
+1. Check if the bug has already been reported in [Issues](https://github.com/WailanTirajoh/nuxt-tauri-starter/issues)
 2. If not, create a new issue with:
    - Clear title and description
    - Steps to reproduce
@@ -16,7 +16,7 @@ Thank you for your interest in contributing! 🎉
 
 ### Suggesting Features 💡
 
-1. Check [Discussions](https://github.com/yourusername/nuxt-tauri-boilerplate/discussions) first
+1. Check [Discussions](https://github.com/WailanTirajoh/nuxt-tauri-starter/discussions) first
 2. Create a new discussion or issue describing:
    - The problem you're trying to solve
    - Your proposed solution
@@ -146,8 +146,8 @@ refactor: simplify storage registry logic
 
 ## Questions?
 
-- 💬 Start a [Discussion](https://github.com/yourusername/nuxt-tauri-boilerplate/discussions)
-- 📧 Open an [Issue](https://github.com/yourusername/nuxt-tauri-boilerplate/issues)
+- 💬 Start a [Discussion](https://github.com/WailanTirajoh/nuxt-tauri-starter/discussions)
+- 📧 Open an [Issue](https://github.com/WailanTirajoh/nuxt-tauri-starter/issues)
 
 ## Code of Conduct
 

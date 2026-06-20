@@ -40,7 +40,7 @@ const products = useDocumentStorage('products', [])
 ## Quick start
 
 ```bash
-git clone <your-repo-url> && cd noken-pos
+git clone https://github.com/WailanTirajoh/nuxt-tauri-starter && cd nuxt-tauri-starter
 pnpm install
 pnpm tauri dev
 ```

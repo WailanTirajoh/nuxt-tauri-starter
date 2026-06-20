@@ -1,6 +1,6 @@
 use thiserror::Error;
 
-/// Custom error types for the POS application
+/// Custom error types for the application
 #[derive(Error, Debug)]
 pub enum AppError {
     #[error("Database error: {0}")]

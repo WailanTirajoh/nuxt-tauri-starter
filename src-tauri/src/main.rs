@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    noken_pos_lib::run()
+    nuxt_tauri_starter_lib::run()
 }

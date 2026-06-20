@@ -56,5 +56,5 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for planned features and how to contribut
 
 ---
 
-[Unreleased]: https://github.com/yourusername/nuxt-tauri-boilerplate/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/yourusername/nuxt-tauri-boilerplate/releases/tag/v1.0.0
+[Unreleased]: https://github.com/WailanTirajoh/nuxt-tauri-starter/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/WailanTirajoh/nuxt-tauri-starter/releases/tag/v1.0.0

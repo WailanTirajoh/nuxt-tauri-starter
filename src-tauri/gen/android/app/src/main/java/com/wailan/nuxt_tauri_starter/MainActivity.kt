@@ -1,4 +1,4 @@
-package com.wailan.noken_pos
+package com.wailan.nuxt_tauri_starter
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge

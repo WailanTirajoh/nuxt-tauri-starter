@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "noken-pos",
-  "version": "0.1.0",
-  "identifier": "com.wailan.noken-pos",
+  "productName": "nuxt-tauri-starter",
+  "version": "1.0.0",
+  "identifier": "com.wailan.nuxt-tauri-starter",
   "build": {
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run generate",
@@ -13,7 +13,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "noken-pos",
+        "title": "nuxt-tauri-starter",
         "width": 800,
         "height": 600
       }
