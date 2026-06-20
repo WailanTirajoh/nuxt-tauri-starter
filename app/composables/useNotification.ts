@@ -14,7 +14,7 @@
  * ```
  */
 
-import { ref, type Ref } from "vue";
+import type { Ref } from "vue";
 import {
   isPermissionGranted,
   requestPermission,
@@ -64,10 +64,6 @@ export interface UseNotificationReturn {
   notify: (input: TitleOrOptions) => Promise<void>;
 }
 
-// Shared, app-wide reactive state (created once, returned to every caller)
-const isSupported = ref(false);
-const permissionGranted = ref(false);
-
 /**
  * Reactive native notification composable
  *
@@ -79,6 +75,14 @@ export function useNotification(
   options: UseNotificationOptions = {},
 ): UseNotificationReturn {
   const { autoRequest = true, requestOnMounted = false, onError } = options;
+
+  // Shared, app-wide reactive state (keyed via useState — SSR-safe and
+  // returned to every caller)
+  const isSupported = useState<boolean>("notification:is-supported", () => false);
+  const permissionGranted = useState<boolean>(
+    "notification:permission-granted",
+    () => false,
+  );
 
   // Error handler
   const handleError = (error: unknown, context: string) => {
