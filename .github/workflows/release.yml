@@ -145,6 +145,13 @@ jobs:
   build-android-release:
     needs: create-release
     runs-on: ubuntu-latest
+    # Release signing is applied only when these secrets are set; otherwise the
+    # release APK/AAB is built unsigned so forks without credentials still pass.
+    env:
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -192,6 +199,20 @@ jobs:
 
       - name: Initialize Tauri Android
         run: pnpm tauri android init
+
+      - name: Configure Android signing
+        if: env.ANDROID_KEYSTORE_BASE64 != ''
+        run: |
+          # `tauri android init` may regenerate app/build.gradle.kts — restore
+          # the committed signing-enabled version before building.
+          git checkout -- src-tauri/gen/android/app/build.gradle.kts
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+          cat > src-tauri/gen/android/keystore.properties <<EOF
+          storePassword=$ANDROID_KEYSTORE_PASSWORD
+          keyPassword=$ANDROID_KEY_PASSWORD
+          keyAlias=$ANDROID_KEY_ALIAS
+          storeFile=$RUNNER_TEMP/release.keystore
+          EOF
 
       - name: Build Android APK
         run: pnpm tauri android build --apk
