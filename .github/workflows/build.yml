@@ -79,7 +79,7 @@ jobs:
 
       - name: Upload artifacts (Linux)
         if: matrix.platform.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: nuxt-tauri-starter-${{ matrix.platform.name }}
           path: |
@@ -89,7 +89,7 @@ jobs:
 
       - name: Upload artifacts (macOS)
         if: matrix.platform.os == 'macos-latest'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: nuxt-tauri-starter-${{ matrix.platform.name }}
           path: |
@@ -99,7 +99,7 @@ jobs:
 
       - name: Upload artifacts (Windows)
         if: matrix.platform.os == 'windows-latest'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: nuxt-tauri-starter-${{ matrix.platform.name }}
           path: |
@@ -181,7 +181,7 @@ jobs:
           NDK_HOME: ${{ env.ANDROID_SDK_ROOT }}/ndk/26.1.10909125
 
       - name: Upload Android artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: nuxt-tauri-starter-android
           path: |
