@@ -188,6 +188,7 @@ impl StorageManager {
     }
 
     /// Clear all documents (for testing)
+    #[allow(dead_code)]
     pub fn clear(&self) {
         let mut store = self.store.write();
         store.clear();
