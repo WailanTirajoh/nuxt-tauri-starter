@@ -92,6 +92,32 @@ The release workflow will automatically:
   - APK: Enable "Unknown Sources" and install
   - AAB: Upload to Google Play Console
 
+#### Android release signing
+
+The Android `release` build is signed automatically **when these repository secrets are set** (Settings → Secrets and variables → Actions). If they're absent, the build still succeeds but produces an **unsigned** release — so forks work out of the box.
+
+| Secret | Description |
+|--------|-------------|
+| `ANDROID_KEYSTORE_BASE64` | Base64 of your keystore file |
+| `ANDROID_KEYSTORE_PASSWORD` | Keystore (store) password |
+| `ANDROID_KEY_PASSWORD` | Key password |
+| `ANDROID_KEY_ALIAS` | Key alias |
+
+Generate a keystore and the base64 secret:
+
+```bash
+keytool -genkey -v -keystore release.keystore \
+  -alias upload -keyalg RSA -keysize 2048 -validity 10000
+
+# Value for ANDROID_KEYSTORE_BASE64:
+base64 -i release.keystore | pbcopy   # macOS (copies to clipboard)
+base64 -w0 release.keystore           # Linux
+```
+
+> The CI decodes with `base64 -d`, which tolerates line breaks, so a wrapped value works too.
+
+Keep `release.keystore` private (never commit it). In CI the keystore is decoded to a temp path and the credentials are written to `src-tauri/gen/android/keystore.properties`, which is gitignored. `app/build.gradle.kts` enables the release `signingConfig` only when that file exists.
+
 ## Caching Strategy
 
 Both workflows use caching to speed up builds:
