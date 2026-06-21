@@ -109,9 +109,12 @@ Generate a keystore and the base64 secret:
 keytool -genkey -v -keystore release.keystore \
   -alias upload -keyalg RSA -keysize 2048 -validity 10000
 
-# macOS/Linux — value for ANDROID_KEYSTORE_BASE64:
-base64 -i release.keystore | pbcopy   # or: base64 -w0 release.keystore
+# Value for ANDROID_KEYSTORE_BASE64:
+base64 -i release.keystore | pbcopy   # macOS (copies to clipboard)
+base64 -w0 release.keystore           # Linux
 ```
+
+> The CI decodes with `base64 -d`, which tolerates line breaks, so a wrapped value works too.
 
 Keep `release.keystore` private (never commit it). In CI the keystore is decoded to a temp path and the credentials are written to `src-tauri/gen/android/keystore.properties`, which is gitignored. `app/build.gradle.kts` enables the release `signingConfig` only when that file exists.
 
