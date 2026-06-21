@@ -54,6 +54,7 @@ const toggleTheme = () => {
     <aside
       class="fixed md:static inset-y-0 left-0 z-40 w-64 md:w-60 shrink-0 flex flex-col bg-gray-50 dark:bg-neutral-950/95 md:dark:bg-neutral-950/60 border-r border-black/5 dark:border-white/10 transform transition-transform duration-200"
       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
+      style="padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom)"
     >
       <!-- Brand -->
       <div class="flex items-center gap-2.5 px-4 h-14 shrink-0">
@@ -129,19 +130,25 @@ const toggleTheme = () => {
     </aside>
 
     <!-- Content -->
-    <main class="flex-1 overflow-y-auto">
-      <!-- Mobile top bar -->
+    <main
+      class="flex-1 overflow-y-auto"
+      style="padding-bottom: env(safe-area-inset-bottom)"
+    >
+      <!-- Mobile top bar (padding-top clears the device status bar) -->
       <div
-        class="md:hidden sticky top-0 z-20 flex items-center gap-3 px-4 h-14 bg-gray-100/90 dark:bg-neutral-900/90 backdrop-blur border-b border-black/5 dark:border-white/10"
+        class="md:hidden sticky top-0 z-20 bg-gray-100/90 dark:bg-neutral-900/90 backdrop-blur border-b border-black/5 dark:border-white/10"
+        style="padding-top: env(safe-area-inset-top)"
       >
-        <button
-          class="p-1 -ml-1 text-gray-700 dark:text-neutral-200"
-          aria-label="Open menu"
-          @click="sidebarOpen = true"
-        >
-          <AppIcon name="menu" :size="22" />
-        </button>
-        <span class="font-semibold text-sm">Tauri Starter</span>
+        <div class="flex items-center gap-3 px-4 h-14">
+          <button
+            class="p-1 -ml-1 text-gray-700 dark:text-neutral-200"
+            aria-label="Open menu"
+            @click="sidebarOpen = true"
+          >
+            <AppIcon name="menu" :size="22" />
+          </button>
+          <span class="font-semibold text-sm">Tauri Starter</span>
+        </div>
       </div>
 
       <div class="max-w-3xl mx-auto px-4 sm:px-8 py-6 sm:py-8">

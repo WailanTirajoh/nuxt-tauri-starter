@@ -3,6 +3,18 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
   // ssr: false,
+  app: {
+    head: {
+      // viewport-fit=cover exposes env(safe-area-inset-*) so the UI can avoid
+      // the mobile status bar / navigation bar (notches, Android system bars).
+      meta: [
+        {
+          name: "viewport",
+          content: "width=device-width, initial-scale=1, viewport-fit=cover",
+        },
+      ],
+    },
+  },
   css: ["~/assets/css/main.css"],
   postcss: {
     plugins: {
