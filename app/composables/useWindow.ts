@@ -91,9 +91,17 @@ export function useWindow(
 ): UseWindowReturn {
   const { onError } = options;
 
-  // Resolve the label up front (current window's label is available synchronously)
-  const winLabel =
-    label ?? (import.meta.client ? getCurrentWindow().label : "current");
+  // Resolve the label up front (current window's label is available
+  // synchronously under Tauri). Guard against non-Tauri contexts (browser,
+  // SSR) where `getCurrentWindow()` would throw.
+  let winLabel = label ?? "current";
+  if (!label && import.meta.client) {
+    try {
+      winLabel = getCurrentWindow().label;
+    } catch {
+      // Not running under Tauri — keep the fallback label
+    }
+  }
 
   // Shared, app-wide reactive state (keyed by label — SSR-safe via useState)
   const isSupported = useState<boolean>(
