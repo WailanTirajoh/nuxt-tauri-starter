@@ -172,7 +172,7 @@ Change which files are uploaded:
 
 ```yaml
 - name: Upload artifacts
-  uses: actions/upload-artifact@v4
+  uses: actions/upload-artifact@v5
   with:
     name: my-app-windows
     path: |

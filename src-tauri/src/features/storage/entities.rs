@@ -65,12 +65,6 @@ pub struct SetDocumentRequest {
     pub expected_version: Option<u64>, // For optimistic concurrency
 }
 
-/// Request to get a document
-#[derive(Debug, Deserialize)]
-pub struct GetDocumentRequest {
-    pub key: String,
-}
-
 /// Request to delete a document
 #[derive(Debug, Deserialize)]
 pub struct DeleteDocumentRequest {

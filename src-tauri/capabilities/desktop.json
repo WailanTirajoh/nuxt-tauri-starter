@@ -1,0 +1,8 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "desktop",
+  "description": "Desktop-only capabilities. The updater plugin is not compiled for mobile (see Cargo.toml + lib.rs), so its permissions must be scoped to desktop platforms to keep the Android/iOS build valid.",
+  "platforms": ["linux", "macOS", "windows"],
+  "windows": ["main", "secondary"],
+  "permissions": ["updater:default"]
+}

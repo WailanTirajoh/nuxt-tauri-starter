@@ -34,7 +34,6 @@
     "fs:allow-appdata-write-recursive",
     "fs:allow-watch",
     "fs:allow-unwatch",
-    "updater:default",
     "process:default"
   ]
 }

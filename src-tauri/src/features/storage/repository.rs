@@ -69,6 +69,7 @@ impl StorageRepository {
     }
 
     /// Persist multiple documents in a batch
+    #[allow(dead_code)]
     pub fn persist_batch(database: &Arc<Database>, documents: &[Document]) -> AppResult<()> {
         let mut conn = database.conn.lock().map_err(|e| AppError::Internal(e.to_string()))?;
         
@@ -114,6 +115,7 @@ impl StorageRepository {
     }
 
     /// Get a single document from database
+    #[allow(dead_code)]
     pub fn get(database: &Arc<Database>, key: &str) -> AppResult<Option<Document>> {
         let mut conn = database.conn.lock().map_err(|e| AppError::Internal(e.to_string()))?;
         

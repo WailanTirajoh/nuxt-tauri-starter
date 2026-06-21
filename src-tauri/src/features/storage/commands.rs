@@ -100,9 +100,11 @@ pub async fn storage_keys(storage: State<'_, Arc<StorageManager>>) -> Result<Vec
     Ok(documents.into_iter().map(|d| d.key).collect())
 }
 
-/// Clear all storage (for testing)
+/// Clear all storage (for testing). Available API — not wired into the
+/// default invoke handler.
 #[cfg(debug_assertions)]
 #[tauri::command]
+#[allow(dead_code)]
 pub async fn storage_clear(
     storage: State<'_, Arc<StorageManager>>,
     database: State<'_, Arc<Database>>,
