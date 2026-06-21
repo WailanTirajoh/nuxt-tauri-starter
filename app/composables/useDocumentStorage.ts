@@ -27,6 +27,16 @@ import type {
 import { storageRegistry, WINDOW_ID } from "@/utils/storageRegistry";
 
 /**
+ * Whether the Tauri runtime is available. False during SSR / prerender and in
+ * a plain browser — in those contexts the Tauri IPC (`invoke` / `listen`) is
+ * unavailable, so storage calls are skipped instead of throwing.
+ */
+const isTauri = (): boolean =>
+  import.meta.client &&
+  typeof window !== "undefined" &&
+  "__TAURI_INTERNALS__" in window;
+
+/**
  * Reactive document storage composable
  *
  * @param key - Unique document key
@@ -131,6 +141,7 @@ export function useDocumentStorage<T>(
 
   // Sync to Rust with debounce
   const syncToRust = useDebounceFn(async (newValue: T) => {
+    if (!isTauri()) return;
     try {
       const currentVersion = storageRegistry.getVersion(key);
 
@@ -162,9 +173,12 @@ export function useDocumentStorage<T>(
     },
   );
 
-  // Initialize
-  loadInitialValue();
-  setupListener();
+  // Initialize (only when the Tauri runtime is present — skipped during SSR /
+  // prerender and in a plain browser)
+  if (isTauri()) {
+    loadInitialValue();
+    setupListener();
+  }
 
   // Register in global registry
   storageRegistry.setRef(key, data);
@@ -181,6 +195,7 @@ export function useDocumentStorage<T>(
  * Remove a document from storage
  */
 export async function removeDocument(key: string): Promise<void> {
+  if (!isTauri()) return;
   try {
     const currentVersion = storageRegistry.getVersion(key);
 
@@ -205,6 +220,7 @@ export async function removeDocument(key: string): Promise<void> {
  * Get all document keys (for debugging)
  */
 export async function getDocumentKeys(): Promise<string[]> {
+  if (!isTauri()) return [];
   try {
     return await invoke<string[]>("storage_keys");
   } catch (error) {
@@ -220,6 +236,7 @@ export async function clearDocumentStorage(): Promise<void> {
   if (import.meta.env.PROD) {
     throw new Error("clearDocumentStorage is not available in production");
   }
+  if (!isTauri()) return;
 
   try {
     await invoke("storage_clear");
