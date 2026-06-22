@@ -255,9 +255,13 @@ export interface UseTextFileReturn {
   stop: () => void;
 }
 
+/** Whether we're running in a mobile (Android/iOS) webview. */
+const isMobile = (): boolean =>
+  import.meta.client && /android|iphone|ipad|ipod/i.test(navigator.userAgent);
+
 /**
  * Reactive single-file binding — auto-loads, debounce-writes on change, and
- * live-updates from external changes (parallels `useDocumentStorage`).
+ * (on desktop) live-updates from external changes (parallels `useDocumentStorage`).
  *
  * @param path - File path relative to `baseDir`
  * @param options - Binding options
@@ -270,13 +274,21 @@ export function useTextFile(
     baseDir = BaseDirectory.AppData,
     defaultValue = "",
     debounce = 300,
-    watch: enableWatch = true,
+    watch: enableWatch,
     onError,
   } = options;
+
+  // File watching defaults to desktop-only. On mobile the app-data dir is a
+  // private, single-writer sandbox (nothing external to watch), and fs watching
+  // there is unreliable and can flood the UI thread (causing ANRs/freezes).
+  // Pass `watch: true` to force it.
+  const shouldWatch = enableWatch ?? !isMobile();
 
   const data = ref<string>(defaultValue);
   const isReady = ref(false);
   let unwatch: UnwatchFn | null = null;
+  // True once the binding has been torn down (component unmounted).
+  let stopped = false;
   // Set before applying an external change so the debounced writer skips that tick
   let suppressWrite = false;
 
@@ -315,6 +327,7 @@ export function useTextFile(
   };
 
   const stop = () => {
+    stopped = true;
     if (unwatch) {
       unwatch();
       unwatch = null;
@@ -338,16 +351,23 @@ export function useTextFile(
   if (import.meta.client) {
     (async () => {
       try {
-        if (await exists(path, { baseDir })) {
+        // Read first; seed the file only if it's missing. Avoids a separate
+        // exists() IPC round-trip in the common (file present) case.
+        try {
+          const fresh = await readTextFile(path, { baseDir });
           suppressWrite = true;
-          data.value = await readTextFile(path, { baseDir });
-        } else if (defaultValue) {
-          await writeTextFile(path, defaultValue, { baseDir });
+          data.value = fresh;
+        } catch {
+          if (defaultValue) await writeTextFile(path, defaultValue, { baseDir });
         }
         isReady.value = true;
 
-        if (enableWatch) {
-          unwatch = await watch(path, () => reload(), { baseDir });
+        if (shouldWatch) {
+          const fn = await watch(path, () => reload(), { baseDir });
+          // If the component unmounted while watch() was resolving, clean up
+          // immediately instead of leaking a native watcher.
+          if (stopped) fn();
+          else unwatch = fn;
         }
       } catch (error) {
         handleError(error, "Failed to initialize");
