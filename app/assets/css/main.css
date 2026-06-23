@@ -34,3 +34,38 @@ body {
 *::-webkit-scrollbar-track {
   background: transparent;
 }
+
+/*
+ * Windowed barcode scanning: the native camera renders behind the webview, so
+ * the whole app must be transparent. The app root is hidden and html/body made
+ * transparent; the scan overlay is teleported to <body> so it stays visible.
+ */
+html.scanner-active,
+html.scanner-active body {
+  background: transparent !important;
+}
+html.scanner-active #__nuxt {
+  visibility: hidden;
+}
+
+@keyframes scanline {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(13rem);
+  }
+}
+
+/* Scanner overlay open/close transition (fade + slight scale) */
+.scan-enter-active,
+.scan-leave-active {
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+.scan-enter-from,
+.scan-leave-to {
+  opacity: 0;
+  transform: scale(1.05);
+}

@@ -16,6 +16,30 @@ const {
   ensurePermission,
   openAppSettings,
 } = useBarcodeScanner();
+
+// Windowed scan: the camera renders behind a transparent webview so we can draw
+// our own viewfinder overlay on top.
+const startScan = async () => {
+  const scanned = await scan({ windowed: true });
+  // Haptic feedback on a successful decode (VIBRATE permission is provided by
+  // the barcode-scanner plugin).
+  if (scanned && import.meta.client && navigator.vibrate) {
+    navigator.vibrate([0, 55, 45, 55]);
+  }
+};
+
+// Toggle whole-app transparency while a windowed scan is active.
+watch(scanning, (on) => {
+  if (import.meta.client) {
+    document.documentElement.classList.toggle("scanner-active", on);
+  }
+});
+onBeforeUnmount(() => {
+  if (import.meta.client) {
+    document.documentElement.classList.remove("scanner-active");
+  }
+  if (scanning.value) cancel();
+});
 </script>
 
 <template>
@@ -68,7 +92,7 @@ const {
           v-if="!scanning"
           variant="primary"
           :disabled="!isSupported"
-          @click="scan()"
+          @click="startScan"
         >
           Scan
         </AppButton>
@@ -116,4 +140,40 @@ const {
       </button>
     </div>
   </div>
+
+  <!-- Windowed scan viewfinder — teleported to <body> so it sits on the
+       transparent webview, above the live camera -->
+  <Teleport to="body">
+    <Transition name="scan">
+    <div
+      v-if="scanning"
+      class="fixed inset-0 z-[200] flex flex-col items-center justify-center text-white select-none"
+    >
+      <div
+        class="relative h-64 w-64 rounded-3xl"
+        style="box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55)"
+      >
+        <!-- corner brackets -->
+        <span class="absolute -left-0.5 -top-0.5 h-9 w-9 rounded-tl-3xl border-l-4 border-t-4 border-white/90" />
+        <span class="absolute -right-0.5 -top-0.5 h-9 w-9 rounded-tr-3xl border-r-4 border-t-4 border-white/90" />
+        <span class="absolute -bottom-0.5 -left-0.5 h-9 w-9 rounded-bl-3xl border-b-4 border-l-4 border-white/90" />
+        <span class="absolute -bottom-0.5 -right-0.5 h-9 w-9 rounded-br-3xl border-b-4 border-r-4 border-white/90" />
+        <!-- scan line -->
+        <span
+          class="absolute left-3 right-3 top-3 h-0.5 rounded bg-blue-400"
+          style="animation: scanline 2s ease-in-out infinite alternate"
+        />
+      </div>
+      <p class="mt-8 text-sm text-white/90">
+        Point at a QR code or barcode
+      </p>
+      <button
+        class="mt-6 rounded-full bg-white/15 px-6 py-2 text-sm font-medium backdrop-blur"
+        @click="cancel"
+      >
+        Cancel
+      </button>
+    </div>
+    </Transition>
+  </Teleport>
 </template>
