@@ -159,6 +159,24 @@ See the [Tauri updater docs](https://v2.tauri.app/plugin/updater/) for the full 
 
 ---
 
+## Barcode scanner: `useBarcodeScanner`
+
+VueUse-style wrapper around Tauri's barcode-scanner plugin — camera permission handled for you, reactive scan state, typed result. **Mobile only (Android/iOS).**
+
+```ts
+const { scan, scanning, result, isSupported } = useBarcodeScanner()
+
+const code = await scan({ formats: [Format.QRCode] })
+// code?.content  → the decoded string
+// code?.format   → e.g. "QR_CODE"
+```
+
+Also exposes `permissionGranted`, `ensurePermission()`, `cancel()`, and `openAppSettings()`. Defaults to the OS's native fullscreen scanner; pass `windowed: true` to render your own UI over the live camera.
+
+> Mobile only — on desktop `isSupported` is `false` and `scan()` is a no-op. The plugin adds the camera permission on Android automatically; for iOS the camera usage string lives in `src-tauri/Info.ios.plist`. Permissions are scoped to mobile in `src-tauri/capabilities/mobile.json`.
+
+---
+
 ## Stack
 
 **Frontend:** Nuxt 4 · Vue 3 · TypeScript · Tailwind CSS · VueUse · Pinia  
@@ -198,6 +216,7 @@ Wrapping Tauri's native APIs into composables so you never touch raw IPC directl
 | OS notifications | `useNotification` | ✅ Done |
 | Clipboard | `useClipboard` | 🔲 Planned |
 | Auto-updater | `useUpdater` | ✅ Done |
+| Barcode scanner (mobile) | `useBarcodeScanner` | ✅ Done |
 | HTTP client (Rust-side, bypasses CORS) | `useTauriHttp` | 🔲 Planned |
 | Print / PDF export | `usePrint` | 🔲 Planned |
 | Global shortcuts | `useGlobalShortcut` | 🔲 Planned |
