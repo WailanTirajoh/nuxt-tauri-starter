@@ -105,6 +105,16 @@ export function useBarcodeScanner(
     if (onError) onError(e);
   };
 
+  // Reflect the actual camera-permission state on startup (so the UI doesn't
+  // show "not granted" when it was already granted in a previous session).
+  if (import.meta.client && isSupported.value) {
+    void checkPermissions()
+      .then((state) => {
+        permissionGranted.value = state === "granted";
+      })
+      .catch((err) => handleError(err, "Failed to read camera permission"));
+  }
+
   const ensurePermission = async (): Promise<boolean> => {
     if (!isSupported.value) return false;
     try {
