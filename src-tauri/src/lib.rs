@@ -24,6 +24,11 @@ pub fn run() {
 
     builder
         .setup(|app| {
+            // The barcode-scanner plugin is mobile-only
+            #[cfg(mobile)]
+            app.handle()
+                .plugin(tauri_plugin_barcode_scanner::init())?;
+
             // Initialize database
             let app_dir = app
                 .path()
