@@ -13,6 +13,7 @@ const nav = [
   { to: "/filesystem", label: "Files", icon: "folder", color: "teal" },
   { to: "/updater", label: "Updates", icon: "update", color: "green" },
   { to: "/scanner", label: "Scanner", icon: "scan", color: "orange" },
+  { to: "/print", label: "Print", icon: "printer", color: "gray" },
 ] as const;
 
 const route = useRoute();
