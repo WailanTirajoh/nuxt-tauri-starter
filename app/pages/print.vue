@@ -17,7 +17,11 @@ const items = [
 const total = computed(() =>
   items.reduce((sum, i) => sum + i.qty * i.price, 0),
 );
-const today = new Date().toLocaleDateString();
+// Serialized via useState + a fixed locale/timezone so the SSR and client
+// renders match (avoids a hydration mismatch).
+const today = useState("print-demo-today", () =>
+  new Intl.DateTimeFormat("en-US", { timeZone: "UTC" }).format(new Date()),
+);
 
 const printReceipt = () =>
   printElement(receipt, {
@@ -43,7 +47,11 @@ const printReceipt = () =>
         title="Print the receipt"
         description="Prints only the card below, on its own page"
       >
-        <AppButton variant="primary" :disabled="printing" @click="printReceipt">
+        <AppButton
+          variant="primary"
+          :disabled="!isSupported || printing"
+          @click="printReceipt"
+        >
           {{ printing ? "Preparing…" : "Print receipt" }}
         </AppButton>
       </SettingsRow>

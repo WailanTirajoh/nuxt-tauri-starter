@@ -56,17 +56,10 @@ export interface UsePrintReturn {
 }
 
 const resolveEl = (target: PrintTarget): HTMLElement | null => {
-  if (typeof target === "string") return document.querySelector(target);
+  if (typeof target === "string")
+    return document.querySelector<HTMLElement>(target);
   return unref(target);
 };
-
-/** Collect the page's <style> and stylesheet <link> tags as HTML. */
-const collectStyles = (): string =>
-  Array.from(
-    document.querySelectorAll('style, link[rel="stylesheet"]'),
-  )
-    .map((node) => node.outerHTML)
-    .join("\n");
 
 /**
  * Print composable
@@ -106,12 +99,6 @@ export function usePrint(options: UsePrintOptions = {}): UsePrintReturn {
     if (!import.meta.client) return;
     const { documentTitle = document.title, copyStyles = true, styles } = opts;
 
-    const el = resolveEl(target);
-    if (!el) {
-      handleError(new Error("Print target not found"), "Cannot print element");
-      return;
-    }
-
     printing.value = true;
     // Hidden iframe so the print job contains only the target element
     const iframe = document.createElement("iframe");
@@ -132,21 +119,54 @@ export function usePrint(options: UsePrintOptions = {}): UsePrintReturn {
     };
 
     try {
+      // Resolved inside the try so an invalid selector still routes to onError
+      const el = resolveEl(target);
+      if (!el) {
+        handleError(
+          new Error("Print target not found"),
+          "Cannot print element",
+        );
+        cleanup();
+        return;
+      }
+
       const doc = iframe.contentDocument;
       const win = iframe.contentWindow;
       if (!doc || !win) throw new Error("Could not access print frame");
 
-      doc.open();
-      doc.write(`<!doctype html><html><head><meta charset="utf-8"><title>${documentTitle}</title>${
-        copyStyles ? collectStyles() : ""
-      }${styles ? `<style>${styles}</style>` : ""}</head><body>${el.outerHTML}</body></html>`);
-      doc.close();
+      // Build the print document with DOM APIs (no HTML-string interpolation),
+      // so the title / styles / content can't be injected as markup.
+      doc.title = documentTitle;
+      if (copyStyles) {
+        document
+          .querySelectorAll('style, link[rel="stylesheet"]')
+          .forEach((node) => doc.head.appendChild(doc.importNode(node, true)));
+      }
+      if (styles) {
+        const styleEl = doc.createElement("style");
+        styleEl.textContent = styles;
+        doc.head.appendChild(styleEl);
+      }
+      doc.body.appendChild(doc.importNode(el, true));
 
-      // Wait for the frame (and its stylesheets/images) to settle, then print
+      // Wait for any imported stylesheet <link>s to load before printing
       await new Promise<void>((resolve) => {
-        const done = () => resolve();
-        if (doc.readyState === "complete") setTimeout(done, 50);
-        else win.addEventListener("load", () => setTimeout(done, 50), { once: true });
+        const links = Array.from(
+          doc.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]'),
+        ).filter((l) => !l.sheet);
+        if (links.length === 0) {
+          setTimeout(resolve, 50);
+          return;
+        }
+        let remaining = links.length;
+        const done = () => {
+          if (--remaining <= 0) resolve();
+        };
+        links.forEach((l) => {
+          l.addEventListener("load", done, { once: true });
+          l.addEventListener("error", done, { once: true });
+        });
+        setTimeout(resolve, 800); // safety fallback
       });
 
       win.focus();
