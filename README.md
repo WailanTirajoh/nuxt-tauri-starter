@@ -179,6 +179,25 @@ Also exposes `permissionGranted`, `ensurePermission()`, `cancel()`, and `openApp
 
 ---
 
+## Print / PDF: `usePrint`
+
+Print the whole page or a single element via the webview's native print dialog (which offers "Save as PDF"). No Tauri plugin needed.
+
+```ts
+import { usePrint } from "@/composables/usePrint"
+
+const { print, printElement } = usePrint()
+
+print()                                              // print the whole page
+printElement(receiptRef, { documentTitle: "Receipt" })  // print just one element
+```
+
+`printElement` clones the target into a hidden iframe with the page's stylesheets, so it prints on its own page looking exactly as it does on screen. Accepts an element, a template ref, or a CSS selector, plus `documentTitle` / extra `styles` (e.g. `@page { margin: 16mm }`).
+
+> Desktop-oriented — `window.print()` is reliable in desktop webviews and browsers; some mobile webviews don't support it.
+
+---
+
 ## Stack
 
 **Frontend:** Nuxt 4 · Vue 3 · TypeScript · Tailwind CSS · VueUse · Pinia  
@@ -220,7 +239,7 @@ Wrapping Tauri's native APIs into composables so you never touch raw IPC directl
 | Auto-updater | `useUpdater` | ✅ Done |
 | Barcode scanner (mobile) | `useBarcodeScanner` | ✅ Done |
 | HTTP client (Rust-side, bypasses CORS) | `useTauriHttp` | 🔲 Planned |
-| Print / PDF export | `usePrint` | 🔲 Planned |
+| Print / PDF export | `usePrint` | ✅ Done |
 | Global shortcuts | `useGlobalShortcut` | 🔲 Planned |
 
 Each composable will follow the same pattern as `useDocumentStorage` — VueUse-style, typed, and ready to drop into any component.
